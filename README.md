@@ -1,3 +1,2 @@
-# Custom UI Plugin
-- Plugin Dependencies : CommonLibrary
+# Common Library Plugin
 - Engine version : 5.7
