@@ -102,6 +102,9 @@ concept CONCEPT_GameInstanceSubsystem = TIsDerivedFrom<T, UGameInstanceSubsystem
 template<typename T>
 concept CONCEPT_LocalPlayerSubsystem = TIsDerivedFrom<T, ULocalPlayerSubsystem>::Value;
 
+template<typename T>
+concept CONCEPT_PlayerController = TIsDerivedFrom<T, APlayerController>::Value;
+
 UCLASS()
 class COMMONLIBRARY_API UCommonUtils : public UBlueprintFunctionLibrary
 {
@@ -140,6 +143,21 @@ public:
 				{
 					return local_player->GetSubsystem<T>();
 				}
+			}
+		}
+
+		return nullptr;
+	}
+
+	template<CONCEPT_PlayerController T = APlayerController>
+	static FORCEINLINE T* GetLocalPlayerContorller(const UObject* _obj)
+	{
+		if (IsValid(_obj))
+		{
+			const auto world = _obj->GetWorld();
+			if (IsValid(world))
+			{
+				return world->GetFirstPlayerController<T>();
 			}
 		}
 
