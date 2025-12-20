@@ -28,18 +28,34 @@
 
 #pragma endregion
 
+FORCEINLINE constexpr bool IsAny()
+{
+	return false;
+}
+
+template <typename... Args>
+FORCEINLINE constexpr bool IsAny(Args&&... _rest)
+{
+	return (... || static_cast<bool>(_rest));
+}
+
+FORCEINLINE constexpr bool IsAll()
+{
+	return true;
+}
+
+template <typename... Args>
+FORCEINLINE constexpr bool IsAll(Args&&... _rest)
+{
+	return (... && static_cast<bool>(_rest));
+}
+
 #pragma region ValidCheck
 
 template <typename T>
 FORCEINLINE bool IsValid(const TWeakObjectPtr<T>& _weak_obj_ptr)
 {
 	return _weak_obj_ptr.IsValid();
-}
-
-template <typename T>
-FORCEINLINE bool IsValid(const TObjectPtr<T>* _obj_ptr)
-{
-	return _obj_ptr != nullptr;
 }
 
 template <typename T>
