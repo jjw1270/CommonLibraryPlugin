@@ -65,6 +65,12 @@ IsValid(const T* _ptr)
 	return _ptr != nullptr;
 }
 
+template <typename T>
+FORCEINLINE bool IsValid(const TSharedPtr<T>& _shared_ptr)
+{
+	return _shared_ptr.IsValid();
+}
+
 FORCEINLINE bool IsAllValid()
 {
 	return true;
