@@ -7,15 +7,17 @@
 
 #pragma region Log
 
+COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
+
 #define CALLED_FROM (TEXT(__FUNCTION__) + FString::Printf(TEXT("(%d)"), __LINE__))
-#define CUSTOM_LOG(Verbosity, Format, ...) UE_LOG(LogTemp, Verbosity, TEXT("%s %s"), *CALLED_FROM, *FString::Printf(Format, ##__VA_ARGS__))
+#define CUSTOM_LOG(Verbosity, Format, ...) UE_LOG(MyLog, Verbosity, TEXT("%s %s"), *CALLED_FROM, *FString::Printf(Format, ##__VA_ARGS__))
 #define CUSTOM_LOG_SCREEN(LifeTime, Color, Format, ...) GEngine->AddOnScreenDebugMessage(-1, LifeTime, Color, FString::Printf(Format, ##__VA_ARGS__))
 
 #define TRACE() \
-	UE_LOG(LogTemp, Log, TEXT("%s"), *CALLED_FROM);
+	UE_LOG(MyLog, Display, TEXT("%s"), *CALLED_FROM);
 
 #define TRACE_LOG(Format, ...) \
-	CUSTOM_LOG(Log, Format, ##__VA_ARGS__); \
+	CUSTOM_LOG(Display, Format, ##__VA_ARGS__); \
 	CUSTOM_LOG_SCREEN(4.0f, FColor::Green, Format, ##__VA_ARGS__);
 
 #define TRACE_WARNING(Format, ...) \
