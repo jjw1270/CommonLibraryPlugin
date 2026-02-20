@@ -174,7 +174,7 @@ public:
 	}
 
 	template<CONCEPT_PlayerController T = APlayerController>
-	static FORCEINLINE T* GetLocalPlayerContorller(const UObject* _obj)
+	static FORCEINLINE T* GetLocalPlayerController(const UObject* _obj)
 	{
 		if (IsValid(_obj))
 		{
