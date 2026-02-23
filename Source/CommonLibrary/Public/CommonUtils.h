@@ -79,9 +79,9 @@ FORCEINLINE bool IsAllValid()
 }
 
 template <typename... Args>
-FORCEINLINE bool IsAllValid(const UObject* _obj, Args... _rest)
+FORCEINLINE bool IsAllValid(Args&&... _args)
 {
-	return IsValid(_obj) && IsAllValid(_rest...);
+	return (... && IsValid(Forward<Args>(_args)));
 }
 
 FORCEINLINE bool IsInvalid(const UObject* _obj)
@@ -95,15 +95,15 @@ FORCEINLINE bool IsInvalid(const TWeakObjectPtr<T>& _weak_obj_ptr)
 	return !IsValid(_weak_obj_ptr);
 }
 
-FORCEINLINE bool IsAnyInvalid(const UObject* _obj)
+FORCEINLINE bool IsAnyInvalid()
 {
-	return IsInvalid(_obj);
+	return false;
 }
 
 template <typename... Args>
-FORCEINLINE bool IsAnyInvalid(const UObject* _obj, Args... _rest)
+FORCEINLINE bool IsAnyInvalid(Args&&... _args)
 {
-	return IsInvalid(_obj) || IsAnyInvalid(_rest...);
+	return (... || !IsValid(Forward<Args>(_args)));
 }
 
 #pragma endregion
