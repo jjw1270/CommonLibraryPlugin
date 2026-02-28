@@ -84,15 +84,10 @@ FORCEINLINE bool IsAllValid(Args&&... _args)
 	return (... && IsValid(Forward<Args>(_args)));
 }
 
-FORCEINLINE bool IsInvalid(const UObject* _obj)
-{
-	return !IsValid(_obj);
-}
-
 template <typename T>
-FORCEINLINE bool IsInvalid(const TWeakObjectPtr<T>& _weak_obj_ptr)
+FORCEINLINE bool IsInvalid(T&& _arg)
 {
-	return !IsValid(_weak_obj_ptr);
+	return !IsValid(Forward<T>(_arg));
 }
 
 FORCEINLINE bool IsAnyInvalid()
