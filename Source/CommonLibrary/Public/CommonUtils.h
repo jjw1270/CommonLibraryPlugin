@@ -6,7 +6,6 @@
 #include "CommonUtils.generated.h"
 
 #pragma region Log
-
 COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
 
 #define CALLED_FROM (TEXT(__FUNCTION__) + FString::Printf(TEXT("(%d)"), __LINE__))
@@ -102,33 +101,16 @@ FORCEINLINE bool IsAnyInvalid(Args&&... _args)
 }
 
 #pragma endregion
-
-template <typename T>
-FORCEINLINE FString TEnumToString(T _enum_value)
-{
-	static_assert(TIsEnum<T>::Value, "TEnumToString<T> requires an enum type.");
-
-	const UEnum* enum_ptr = StaticEnum<T>();
-	if (enum_ptr == nullptr)
-	{
-		return TEXT("InvalidEnumType");
-	}
-
-	const int64 value = static_cast<int64>(_enum_value);
-	if (!enum_ptr->IsValidEnumValue(value))
-	{
-		return TEXT("InvalidEnumValue");
-	}
-
-	return enum_ptr->GetNameStringByValue(value);
-}
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma region Enum
 FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _include_hidden = false)
 {
-	if (IsInvalid(_enum))
+	if (_enum == nullptr)
 		return false;
 
-	for (int32 i = 0; i < _enum->NumEnums(); ++i)
+	const int32 num = _enum->NumEnums();
+
+	for (int32 i = 0; i < num; ++i)
 	{
 		if (!_include_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
 			continue;
@@ -140,6 +122,38 @@ FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _includ
 	return false;
 }
 
+
+template<typename TEnum>
+FORCEINLINE bool IsValidEnumValue(TEnum _enum_value)
+{
+	static_assert(TIsEnum<TEnum>::Value, "TEnum must be an enum type.");
+
+	const UEnum* enum_ptr = StaticEnum<TEnum>();
+	if (enum_ptr == nullptr)
+		return false;
+
+	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value));
+}
+
+
+template <typename TEnum>
+FORCEINLINE FString TEnumToString(TEnum _enum_value)
+{
+	static_assert(TIsEnum<TEnum>::Value, "TEnumToString requires an enum type.");
+
+	const UEnum* enum_ptr = StaticEnum<TEnum>();
+	if (enum_ptr == nullptr)
+		return TEXT("InvalidEnumType");
+
+	const int64 value = static_cast<int64>(_enum_value);
+
+	if (!IsValidEnumValue(enum_ptr, value))
+		return TEXT("InvalidEnumValue");
+
+	return enum_ptr->GetNameStringByValue(value);
+}
+#pragma endregion Enum
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 concept CONCEPT_GameInstanceSubsystem = TIsDerivedFrom<T, UGameInstanceSubsystem>::Value;
 
