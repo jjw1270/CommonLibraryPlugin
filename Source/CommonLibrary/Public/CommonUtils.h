@@ -104,15 +104,23 @@ FORCEINLINE bool IsAnyInvalid(Args&&... _args)
 #pragma endregion
 
 template <typename T>
-FORCEINLINE FString TEnumtoString(T _enum_value)
+FORCEINLINE FString TEnumToString(T _enum_value)
 {
+	static_assert(TIsEnum<T>::Value, "TEnumToString<T> requires an enum type.");
+
 	const UEnum* enum_ptr = StaticEnum<T>();
-	if (IsValid(enum_ptr))
+	if (enum_ptr == nullptr)
 	{
-		return enum_ptr->GetNameStringByValue(static_cast<int64>(_enum_value));
+		return TEXT("InvalidEnumType");
 	}
 
-	return FString(TEXT("InvalidEnum"));
+	const int64 value = static_cast<int64>(_enum_value);
+	if (!enum_ptr->IsValidEnumValue(value))
+	{
+		return TEXT("InvalidEnumValue");
+	}
+
+	return enum_ptr->GetNameStringByValue(value);
 }
 
 template<typename T>
