@@ -123,6 +123,23 @@ FORCEINLINE FString TEnumToString(T _enum_value)
 	return enum_ptr->GetNameStringByValue(value);
 }
 
+FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _include_hidden = false)
+{
+	if (IsInvalid(_enum))
+		return false;
+
+	for (int32 i = 0; i < _enum->NumEnums(); ++i)
+	{
+		if (!_include_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
+			continue;
+
+		if (_enum->GetValueByIndex(i) == _value)
+			return true;
+	}
+
+	return false;
+}
+
 template<typename T>
 concept CONCEPT_GameInstanceSubsystem = TIsDerivedFrom<T, UGameInstanceSubsystem>::Value;
 
