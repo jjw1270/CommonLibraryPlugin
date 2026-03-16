@@ -26,8 +26,43 @@ COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
 #define TRACE_ERROR(Format, ...) \
 	CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
 	ensure(false);
-
 #pragma endregion
+
+#pragma region Editor Log
+namespace EditorLog
+{
+	enum class EEditorLogVerbosity
+	{
+		Display,
+		Warning,
+		Error
+	};
+
+	COMMONLIBRARY_API void EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message);
+	COMMONLIBRARY_API void EditorClearMessage(const FName& _log_name, const FString& _log_label);
+
+	COMMONLIBRARY_API void EditorNotify(EEditorLogVerbosity _verbosity, const FString& _message);
+}
+
+#define EDITOR_MESSAGE_LOG(_log_name, _format, ...) \
+	EditorLog::EditorMessage(EditorLog::EEditorLogVerbosity::Display, _log_name, FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_MESSAGE_WARNING(_log_name, _format, ...) \
+	EditorLog::EditorMessage(EditorLog::EEditorLogVerbosity::Warning, _log_name, FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_MESSAGE_ERROR(_log_name, _format, ...) \
+	EditorLog::EditorMessage(EditorLog::EEditorLogVerbosity::Error, _log_name, FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_NOTIFY_LOG(_format, ...) \
+	EditorLog::EditorNotify(EditorLog::EEditorLogVerbosity::Display,  FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_NOTIFY_WARNING(_format, ...) \
+	EditorLog::EditorNotify(EditorLog::EEditorLogVerbosity::Warning,  FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_NOTIFY_ERROR(_format, ...) \
+	EditorLog::EditorNotify(EditorLog::EEditorLogVerbosity::Error,  FString::Printf(_format, ##__VA_ARGS__))
+
+#pragma endregion Editor Log
 
 FORCEINLINE constexpr bool IsAny()
 {
