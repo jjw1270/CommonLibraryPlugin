@@ -1,14 +1,18 @@
 #include "CommonUtils.h"
 
+#if WITH_EDITOR
 #include "MessageLogModule.h"
 #include "Logging/MessageLog.h"
 #include "IMessageLogListing.h"
 #include "Misc/UObjectToken.h"
 #include "Widgets/Notifications/SNotificationList.h"
 #include "Framework/Notifications/NotificationManager.h"
+#include "Editor.h"
+#include "Editor/EditorEngine.h"
+#include "Misc/MessageDialog.h"
+#endif
 
 DEFINE_LOG_CATEGORY(MyLog)
-
 
 void EditorLog::EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message)
 {
@@ -37,6 +41,13 @@ void EditorLog::EditorClearMessage(const FName& _log_name)
 #if WITH_EDITOR
 	FMessageLogModule& message_log_module = FModuleManager::LoadModuleChecked<FMessageLogModule>("MessageLog");
 	message_log_module.GetLogListing(_log_name)->ClearMessages();
+#endif
+}
+
+void EditorLog::EditorPopup(const FString& _message)
+{
+#if WITH_EDITOR
+	FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(_message));
 #endif
 }
 

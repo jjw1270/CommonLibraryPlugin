@@ -41,6 +41,8 @@ namespace EditorLog
 	COMMONLIBRARY_API void EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message);
 	COMMONLIBRARY_API void EditorClearMessage(const FName& _log_name);
 
+	COMMONLIBRARY_API void EditorPopup(const FString& _message);
+
 	COMMONLIBRARY_API void EditorNotify(EEditorLogVerbosity _verbosity, const FString& _message);
 }
 
@@ -55,6 +57,9 @@ namespace EditorLog
 
 #define EDITOR_MESSAGE_CLEAR(_log_name) \
 	EditorLog::EditorClearMessage(_log_name)
+
+#define EDITOR_POPUP( _format, ...) \
+	EditorLog::EditorPopup(FString::Printf(_format, ##__VA_ARGS__))
 
 #define EDITOR_NOTIFY_LOG(_format, ...) \
 	EditorLog::EditorNotify(EditorLog::EEditorLogVerbosity::Display,  FString::Printf(_format, ##__VA_ARGS__))
