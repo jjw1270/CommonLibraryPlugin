@@ -146,7 +146,7 @@ FORCEINLINE bool IsAnyInvalid(Args&&... _args)
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma region Enum
-FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _include_hidden = false)
+FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _skip_hidden = false)
 {
 	if (_enum == nullptr)
 		return false;
@@ -155,7 +155,7 @@ FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _includ
 
 	for (int32 i = 0; i < num; ++i)
 	{
-		if (_include_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
+		if (_skip_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
 			continue;
 
 		if (_enum->GetValueByIndex(i) == _value)
@@ -166,7 +166,7 @@ FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _includ
 }
 
 template<typename TEnum>
-FORCEINLINE bool IsValidEnumValue(TEnum _enum_value, bool _include_hidden = false)
+FORCEINLINE bool IsValidEnumValue(TEnum _enum_value, bool _skip_hidden = false)
 {
 	static_assert(TIsEnum<TEnum>::Value, "TEnum must be an enum type.");
 
@@ -174,11 +174,11 @@ FORCEINLINE bool IsValidEnumValue(TEnum _enum_value, bool _include_hidden = fals
 	if (enum_ptr == nullptr)
 		return false;
 
-	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value), _include_hidden);
+	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value), _skip_hidden);
 }
 
 template <typename TEnum>
-FORCEINLINE FString TEnumToString(TEnum _enum_value, bool _include_hidden = false)
+FORCEINLINE FString TEnumToString(TEnum _enum_value, bool _skip_hidden = false)
 {
 	static_assert(TIsEnum<TEnum>::Value, "TEnumToString requires an enum type.");
 
@@ -188,7 +188,7 @@ FORCEINLINE FString TEnumToString(TEnum _enum_value, bool _include_hidden = fals
 
 	const int64 value = static_cast<int64>(_enum_value);
 
-	if (!IsValidEnumValue(enum_ptr, value, _include_hidden))
+	if (!IsValidEnumValue(enum_ptr, value, _skip_hidden))
 		return TEXT("InvalidEnumValue");
 
 	return enum_ptr->GetNameStringByValue(value);
