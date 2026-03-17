@@ -39,7 +39,7 @@ namespace EditorLog
 	};
 
 	COMMONLIBRARY_API void EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message);
-	COMMONLIBRARY_API void EditorClearMessage(const FName& _log_name, const FString& _log_label);
+	COMMONLIBRARY_API void EditorClearMessage(const FName& _log_name);
 
 	COMMONLIBRARY_API void EditorNotify(EEditorLogVerbosity _verbosity, const FString& _message);
 }
@@ -52,6 +52,9 @@ namespace EditorLog
 
 #define EDITOR_MESSAGE_ERROR(_log_name, _format, ...) \
 	EditorLog::EditorMessage(EditorLog::EEditorLogVerbosity::Error, _log_name, FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_MESSAGE_CLEAR(_log_name) \
+	EditorLog::EditorClearMessage(_log_name)
 
 #define EDITOR_NOTIFY_LOG(_format, ...) \
 	EditorLog::EditorNotify(EditorLog::EEditorLogVerbosity::Display,  FString::Printf(_format, ##__VA_ARGS__))
@@ -147,7 +150,7 @@ FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _includ
 
 	for (int32 i = 0; i < num; ++i)
 	{
-		if (!_include_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
+		if (_include_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
 			continue;
 
 		if (_enum->GetValueByIndex(i) == _value)
@@ -157,9 +160,8 @@ FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _includ
 	return false;
 }
 
-
 template<typename TEnum>
-FORCEINLINE bool IsValidEnumValue(TEnum _enum_value)
+FORCEINLINE bool IsValidEnumValue(TEnum _enum_value, bool _include_hidden = false)
 {
 	static_assert(TIsEnum<TEnum>::Value, "TEnum must be an enum type.");
 
@@ -167,12 +169,11 @@ FORCEINLINE bool IsValidEnumValue(TEnum _enum_value)
 	if (enum_ptr == nullptr)
 		return false;
 
-	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value));
+	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value), _include_hidden);
 }
 
-
 template <typename TEnum>
-FORCEINLINE FString TEnumToString(TEnum _enum_value)
+FORCEINLINE FString TEnumToString(TEnum _enum_value, bool _include_hidden = false)
 {
 	static_assert(TIsEnum<TEnum>::Value, "TEnumToString requires an enum type.");
 
@@ -182,7 +183,7 @@ FORCEINLINE FString TEnumToString(TEnum _enum_value)
 
 	const int64 value = static_cast<int64>(_enum_value);
 
-	if (!IsValidEnumValue(enum_ptr, value))
+	if (!IsValidEnumValue(enum_ptr, value, _include_hidden))
 		return TEXT("InvalidEnumValue");
 
 	return enum_ptr->GetNameStringByValue(value);

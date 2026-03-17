@@ -38,6 +38,7 @@ public class CommonLibrary : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				"MessageLog",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

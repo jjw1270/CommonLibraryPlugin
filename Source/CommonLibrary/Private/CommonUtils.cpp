@@ -1,5 +1,8 @@
 #include "CommonUtils.h"
+
+#include "MessageLogModule.h"
 #include "Logging/MessageLog.h"
+#include "IMessageLogListing.h"
 #include "Misc/UObjectToken.h"
 #include "Widgets/Notifications/SNotificationList.h"
 #include "Framework/Notifications/NotificationManager.h"
@@ -26,6 +29,14 @@ void EditorLog::EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_
 	default:
 		break;
 	}
+#endif
+}
+
+void EditorLog::EditorClearMessage(const FName& _log_name)
+{
+#if WITH_EDITOR
+	FMessageLogModule& message_log_module = FModuleManager::LoadModuleChecked<FMessageLogModule>("MessageLog");
+	message_log_module.GetLogListing(_log_name)->ClearMessages();
 #endif
 }
 
