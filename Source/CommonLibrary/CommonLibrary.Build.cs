@@ -26,9 +26,10 @@ public class CommonLibrary : ModuleRules
 			new string[]
 			{
 				"Core",
+				"MessageLog",
 				// ... add other public dependencies that you statically link with here ...
 			}
-			);
+            );
 			
 		
 		PrivateDependencyModuleNames.AddRange(
@@ -38,7 +39,6 @@ public class CommonLibrary : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"MessageLog",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
