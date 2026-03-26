@@ -103,6 +103,12 @@ FORCEINLINE bool IsValid(const TWeakObjectPtr<T>& _weak_obj_ptr)
 }
 
 template <typename T>
+FORCEINLINE bool IsValid(const TSoftObjectPtr<T>& _soft_obj_ptr)
+{
+	return _soft_obj_ptr.IsValid();
+}
+
+template <typename T>
 FORCEINLINE typename TEnableIf<!TIsDerivedFrom<T, UObject>::Value, bool>::Type
 IsValid(const T* _ptr)
 {
