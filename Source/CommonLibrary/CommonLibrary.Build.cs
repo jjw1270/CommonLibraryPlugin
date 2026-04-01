@@ -26,6 +26,8 @@ public class CommonLibrary : ModuleRules
 			new string[]
 			{
 				"Core",
+				"CoreUObject",
+				"Engine",
 				"MessageLog",
 				// ... add other public dependencies that you statically link with here ...
 			}
@@ -35,11 +37,8 @@ public class CommonLibrary : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"CoreUObject",
-				"Engine",
 				"Slate",
 				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
 			}
 			);
 		

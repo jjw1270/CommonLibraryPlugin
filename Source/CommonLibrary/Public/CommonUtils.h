@@ -23,9 +23,15 @@ COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
 	CUSTOM_LOG(Warning, Format, ##__VA_ARGS__); \
 	CUSTOM_LOG_SCREEN(4.0f, FColor::Yellow, Format, ##__VA_ARGS__);
 
+#if WITH_EDITOR
 #define TRACE_ERROR(Format, ...) \
 	CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
-	ensure(false);
+	check(false);
+#else
+#define TRACE_ERROR(Format, ...) \
+	CUSTOM_LOG(Fatal, Format, ##__VA_ARGS__); 
+#endif
+
 #pragma endregion
 
 #pragma region Editor Log
