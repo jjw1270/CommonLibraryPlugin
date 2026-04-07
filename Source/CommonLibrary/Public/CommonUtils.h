@@ -268,4 +268,11 @@ public:
 
 		return nullptr;
 	}
+
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "_obj"))
+	APlayerController* GetLocalPlayerController(const UObject* _obj)
+	{
+		return GetLocalPlayerController(_obj);
+	}
+
 };
