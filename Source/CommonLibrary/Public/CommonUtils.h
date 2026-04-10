@@ -29,7 +29,7 @@ COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
 	check(false);
 #else
 #define TRACE_ERROR(Format, ...) \
-	CUSTOM_LOG(Fatal, Format, ##__VA_ARGS__); 
+	CUSTOM_LOG(Error, Format, ##__VA_ARGS__); 
 #endif
 
 #pragma endregion
