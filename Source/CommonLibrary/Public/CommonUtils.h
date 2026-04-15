@@ -23,13 +23,13 @@ COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
 	CUSTOM_LOG(Warning, Format, ##__VA_ARGS__); \
 	CUSTOM_LOG_SCREEN(4.0f, FColor::Yellow, Format, ##__VA_ARGS__);
 
-#if WITH_EDITOR
+#if WITH_EDITOR && UE_BUILD_DEBUG
 #define TRACE_ERROR(Format, ...) \
-	CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
-	check(false);
+    CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
+    check(false);
 #else
 #define TRACE_ERROR(Format, ...) \
-	CUSTOM_LOG(Error, Format, ##__VA_ARGS__); 
+	CUSTOM_LOG(Error, Format, ##__VA_ARGS__);
 #endif
 
 #pragma endregion
