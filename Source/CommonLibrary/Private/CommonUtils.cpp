@@ -36,6 +36,41 @@ void EditorLog::EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_
 #endif
 }
 
+void EditorLog::EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message, const UObject* _target_object)
+{
+#if WITH_EDITOR
+	if (IsInvalid(_target_object))
+	{
+		EditorMessage(_verbosity, _log_name, _message);
+		return;
+	}
+
+	FMessageLog(_log_name).Open();
+
+	EMessageSeverity::Type severity = EMessageSeverity::Info;
+	switch (_verbosity)
+	{
+	case EditorLog::EEditorLogVerbosity::Display:
+		severity = EMessageSeverity::Info;
+		break;
+	case EditorLog::EEditorLogVerbosity::Warning:
+		severity = EMessageSeverity::Warning;
+		break;
+	case EditorLog::EEditorLogVerbosity::Error:
+		severity = EMessageSeverity::Error;
+		break;
+	default:
+		break;
+	}
+
+	TSharedRef<FTokenizedMessage> message = FTokenizedMessage::Create(severity);
+	message->AddToken(FTextToken::Create(FText::FromString(_message)));
+	message->AddToken(FTextToken::Create(FText::FromString(TEXT(" Asset: "))));
+	message->AddToken(FUObjectToken::Create(_target_object, FText::FromString(_target_object->GetPathName())));
+	FMessageLog(_log_name).AddMessage(message);
+#endif
+}
+
 void EditorLog::EditorClearMessage(const FName& _log_name)
 {
 #if WITH_EDITOR

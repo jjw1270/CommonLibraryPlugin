@@ -1,5 +1,5 @@
 #pragma once 
- 
+
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Subsystems/GameInstanceSubsystem.h"
@@ -45,6 +45,7 @@ namespace EditorLog
 	};
 
 	COMMONLIBRARY_API void EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message);
+	COMMONLIBRARY_API void EditorMessage(EEditorLogVerbosity _verbosity, const FName& _log_name, const FString& _message, const UObject* _target_object);
 	COMMONLIBRARY_API void EditorClearMessage(const FName& _log_name);
 
 	COMMONLIBRARY_API void EditorPopup(const FString& _message);
@@ -60,6 +61,9 @@ namespace EditorLog
 
 #define EDITOR_MESSAGE_ERROR(_log_name, _format, ...) \
 	EditorLog::EditorMessage(EditorLog::EEditorLogVerbosity::Error, _log_name, FString::Printf(_format, ##__VA_ARGS__))
+
+#define EDITOR_MESSAGE_ERROR_OBJECT(_log_name, _object, _format, ...) \
+	EditorLog::EditorMessage(EditorLog::EEditorLogVerbosity::Error, _log_name, FString::Printf(_format, ##__VA_ARGS__), _object)
 
 #define EDITOR_MESSAGE_CLEAR(_log_name) \
 	EditorLog::EditorClearMessage(_log_name)
@@ -231,7 +235,7 @@ public:
 				}
 			}
 		}
-		
+
 		return nullptr;
 	}
 
