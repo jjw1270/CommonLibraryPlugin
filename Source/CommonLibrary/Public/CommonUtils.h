@@ -221,11 +221,11 @@ class COMMONLIBRARY_API UCommonUtils : public UBlueprintFunctionLibrary
 
 public:
 	template<CONCEPT_GameInstanceSubsystem T>
-	static FORCEINLINE T* GetGameInstanceSubsystem(const UObject* _obj)
+	static FORCEINLINE T* GetGameInstanceSubsystem(const UObject* _world_ctx)
 	{
-		if (IsValid(_obj))
+		if (IsValid(_world_ctx))
 		{
-			const auto world = _obj->GetWorld();
+			const auto world = _world_ctx->GetWorld();
 			if (IsValid(world))
 			{
 				auto game_inst = world->GetGameInstance();
@@ -240,11 +240,11 @@ public:
 	}
 
 	template<CONCEPT_LocalPlayerSubsystem T>
-	static FORCEINLINE T* GetLocalPlayerSubsystem(const UObject* _obj)
+	static FORCEINLINE T* GetLocalPlayerSubsystem(const UObject* _world_ctx)
 	{
-		if (IsValid(_obj))
+		if (IsValid(_world_ctx))
 		{
-			const auto world = _obj->GetWorld();
+			const auto world = _world_ctx->GetWorld();
 			if (IsValid(world))
 			{
 				auto local_player = world->GetFirstLocalPlayerFromController();
@@ -259,11 +259,11 @@ public:
 	}
 
 	template<CONCEPT_PlayerController T = APlayerController>
-	static FORCEINLINE T* GetLocalPlayerController(const UObject* _obj)
+	static FORCEINLINE T* GetLocalPlayerController(const UObject* _world_ctx)
 	{
-		if (IsValid(_obj))
+		if (IsValid(_world_ctx))
 		{
-			const auto world = _obj->GetWorld();
+			const auto world = _world_ctx->GetWorld();
 			if (IsValid(world))
 			{
 				return world->GetFirstPlayerController<T>();
@@ -271,5 +271,11 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "_world_ctx"))
+	static APlayerController* GetLocalPlayerController(const UObject* _world_ctx)
+	{
+		return GetLocalPlayerController<APlayerController>(_world_ctx);
 	}
 };
