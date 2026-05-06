@@ -28,19 +28,21 @@ public class CommonLibrary : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Engine",
-				"MessageLog",
 				// ... add other public dependencies that you statically link with here ...
 			}
             );
-			
-		
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Slate",
-				"SlateCore",
-			}
-			);
+
+		if (Target.bBuildEditor)
+		{
+			PrivateDependencyModuleNames.AddRange(
+				new string[]
+				{
+					"MessageLog",
+					"Slate",
+					"SlateCore",
+				}
+				);
+		}
 		
 		
 		DynamicallyLoadedModuleNames.AddRange(

@@ -10,26 +10,36 @@ COMMONLIBRARY_API DECLARE_LOG_CATEGORY_EXTERN(MyLog, Display, All);
 
 #define CALLED_FROM (TEXT(__FUNCTION__) + FString::Printf(TEXT("(%d)"), __LINE__))
 #define CUSTOM_LOG(Verbosity, Format, ...) UE_LOG(MyLog, Verbosity, TEXT("%s %s"), *CALLED_FROM, *FString::Printf(Format, ##__VA_ARGS__))
-#define CUSTOM_LOG_SCREEN(LifeTime, Color, Format, ...) GEngine->AddOnScreenDebugMessage(-1, LifeTime, Color, FString::Printf(Format, ##__VA_ARGS__))
+#define CUSTOM_LOG_SCREEN(LifeTime, Color, Format, ...) do { if (GEngine) { GEngine->AddOnScreenDebugMessage(-1, LifeTime, Color, FString::Printf(Format, ##__VA_ARGS__)); } } while (false)
 
 #define TRACE() \
-	UE_LOG(MyLog, Display, TEXT("%s"), *CALLED_FROM);
+	do { \
+		UE_LOG(MyLog, Display, TEXT("%s"), *CALLED_FROM); \
+	} while (false)
 
 #define TRACE_LOG(Format, ...) \
-	CUSTOM_LOG(Display, Format, ##__VA_ARGS__); \
-	CUSTOM_LOG_SCREEN(4.0f, FColor::Green, Format, ##__VA_ARGS__);
+	do { \
+		CUSTOM_LOG(Display, Format, ##__VA_ARGS__); \
+		CUSTOM_LOG_SCREEN(4.0f, FColor::Green, Format, ##__VA_ARGS__); \
+	} while (false)
 
 #define TRACE_WARNING(Format, ...) \
-	CUSTOM_LOG(Warning, Format, ##__VA_ARGS__); \
-	CUSTOM_LOG_SCREEN(4.0f, FColor::Yellow, Format, ##__VA_ARGS__);
+	do { \
+		CUSTOM_LOG(Warning, Format, ##__VA_ARGS__); \
+		CUSTOM_LOG_SCREEN(4.0f, FColor::Yellow, Format, ##__VA_ARGS__); \
+	} while (false)
 
 #if WITH_EDITOR && UE_BUILD_DEBUG
 #define TRACE_ERROR(Format, ...) \
-    CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
-    check(false);
+	do { \
+		CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
+		check(false); \
+	} while (false)
 #else
 #define TRACE_ERROR(Format, ...) \
-	CUSTOM_LOG(Error, Format, ##__VA_ARGS__);
+	do { \
+		CUSTOM_LOG(Error, Format, ##__VA_ARGS__); \
+	} while (false)
 #endif
 
 #pragma endregion
@@ -156,27 +166,16 @@ FORCEINLINE bool IsAnyInvalid(Args&&... _args)
 #pragma endregion
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma region Enum
-FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value, bool _skip_hidden = false)
+FORCEINLINE bool IsValidEnumValue(const UEnum* _enum, int64 _value)
 {
 	if (_enum == nullptr)
 		return false;
 
-	const int32 num = _enum->NumEnums();
-
-	for (int32 i = 0; i < num; ++i)
-	{
-		if (_skip_hidden && _enum->HasMetaData(TEXT("Hidden"), i))
-			continue;
-
-		if (_enum->GetValueByIndex(i) == _value)
-			return true;
-	}
-
-	return false;
+	return _enum->GetIndexByValue(_value) != INDEX_NONE;
 }
 
 template<typename TEnum>
-FORCEINLINE bool IsValidEnumValue(TEnum _enum_value, bool _skip_hidden = false)
+FORCEINLINE bool IsValidEnumValue(TEnum _enum_value)
 {
 	static_assert(TIsEnum<TEnum>::Value, "TEnum must be an enum type.");
 
@@ -184,11 +183,11 @@ FORCEINLINE bool IsValidEnumValue(TEnum _enum_value, bool _skip_hidden = false)
 	if (enum_ptr == nullptr)
 		return false;
 
-	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value), _skip_hidden);
+	return IsValidEnumValue(enum_ptr, static_cast<int64>(_enum_value));
 }
 
 template <typename TEnum>
-FORCEINLINE FString TEnumToString(TEnum _enum_value, bool _skip_hidden = false)
+FORCEINLINE FString TEnumToString(TEnum _enum_value)
 {
 	static_assert(TIsEnum<TEnum>::Value, "TEnumToString requires an enum type.");
 
@@ -198,7 +197,7 @@ FORCEINLINE FString TEnumToString(TEnum _enum_value, bool _skip_hidden = false)
 
 	const int64 value = static_cast<int64>(_enum_value);
 
-	if (!IsValidEnumValue(enum_ptr, value, _skip_hidden))
+	if (!IsValidEnumValue(enum_ptr, value))
 		return TEXT("InvalidEnumValue");
 
 	return enum_ptr->GetNameStringByValue(value);
